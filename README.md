@@ -27,6 +27,7 @@ int deviceType = SimulatorDetector.getDeviceType();
 * 6：天天
 * 7：蓝叠
 * 8：其他模拟器
+* 9：逍遥
 
 ​        
 

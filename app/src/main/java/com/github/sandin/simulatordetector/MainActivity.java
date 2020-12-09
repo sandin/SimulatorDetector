@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
                 return "蓝叠";
             case SimulatorDetector.UNKNOWN_SIMULATOR:
                 return "其他模拟器";
+            case SimulatorDetector.XYAZ_SIMULATOR:
+                return "逍遥";
             default:
                 return "未知";
         }

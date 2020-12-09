@@ -23,6 +23,7 @@ public class SimulatorDetector {
     public static final int TIANTIAN_SIMULATOR   = 6; // 天天
     public static final int BLUESTACKS_SIMULATOR = 7; // 蓝叠
     public static final int UNKNOWN_SIMULATOR    = 8; // 其他模拟器
+    public static final int XYAZ_SIMULATOR       = 9; // 逍遥
 
     /**
      * Get Device Type
@@ -103,6 +104,12 @@ public class SimulatorDetector {
                         || isFileExists("/dev/bst_ime")
         )) {
             return BLUESTACKS_SIMULATOR; // 蓝叠
+        }
+
+        if (isFileExists("/data/data/com.microvirt.installer")
+            || isFileExists("/sdcard/Android/data/com.microvirt.launcher2")
+            || isFileExists("/sdcard/Android/data/com.microvirt.guide")) {
+            return XYAZ_SIMULATOR; // 逍遥
         }
 
         if (isFileExists("/dev/vboxguest")
