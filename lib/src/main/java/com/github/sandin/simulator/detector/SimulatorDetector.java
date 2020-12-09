@@ -30,16 +30,39 @@ public class SimulatorDetector {
      * @return device type
      */
     public static int getDeviceType() {
+        int result = REAL_DEVICE;
         if (isFileExists("/dev/virtpipe-common")
                 && isFileExists("/dev/virtpipe-render")
                 && isFileExists("/data/data/com.tencent.tinput")
                 && (isFileContainsContent("/proc/version", "Linux version 3.10.0-tencent (ychuang@ubuntu)")
-                || isFileContainsContent("/proc/version", "Linux version 4.4.163+ (mqq@10-51-151-156)")) ) {
-            return SYZS_SIMULATOR; // 腾讯手游助手
+                 || isFileContainsContent("/proc/version", "Linux version 4.4.163+ (mqq@10-51-151-156)")
+                 || isFileContainsContent("/proc/version", "Linux version 3.10.0-tencent (mqq@10-51-151-156)")
+                 || isFileContainsContent("/proc/version", "Linux version 4.4.163-tencent (cibuilder@VM_0_97_centos)"))) {
+            result = SYZS_SIMULATOR; // 腾讯手游助手
+        }
+        if (isFileExists("/mnt/shared/TxGameAssistant")
+                && isFileExists("/system/lib/vboxpcism.ko")
+                && isFileExists("/system/priv-app/ZKOP/ZKOP.apk")
+                && isFileExists("/system/priv-app/TiantianIME/TiantianIME.apk")
+                && isFileExists("/system/etc/init.tiantian.sh")
+                && isFileExists("/init.ttVM_x86.rc")
+                && isFileExists("/etc/init.tiantian.sh")) {
+            result = SYZS_SIMULATOR; // 腾讯手游助手
+        }
+
+        if (result == SYZS_SIMULATOR) {
+            // 容错，特判
+            if (isFileExists("/data/./data/com.bignox.app.store.hd") && isFileExists("/data/./data/com.bignox.google.installer")) {
+                return YESHEN_SIMULATOR;
+            } else if (isFileExists("/system/bin/nemuVM-nemu-control") && isFileExists("/system/bin/nemuVM-prop") && isFileExists("/system/bin/nemuVM-nemu-sf") && isFileExists("/system/bin/nemuVM-nemu-service")) {
+                return MUMU_SIMULATOR;
+            }
+            return SYZS_SIMULATOR;
         }
 
         if (isFileExists("/system/bin/ldinit")
-                && isFileExists("/system/app/ldAppStore")) {
+                || isFileExists("/system/app/ldAppStore")
+                || isFileExists("/system/priv-app/ldAppStore/ldAppStore.apk")) {
             return LDMNQ_SIMULATOR; // 雷电
         }
         if (isFileExists("/data/./data/com.bignox.app.store.hd")
@@ -47,12 +70,10 @@ public class SimulatorDetector {
             return YESHEN_SIMULATOR; // 夜神
         }
 
-        if (isFileExists("/system/lib/nemuguest.ko")
-                && isFileExists("/system/lib/nemusf.ko")
+        if (isFileExists("/system/bin/nemuVM-nemu-control")
                 && isFileExists("/system/bin/nemuVM-prop")
                 && isFileExists("/system/bin/nemuVM-nemu-sf")
-                && "Netease".equalsIgnoreCase(Build.MANUFACTURER)
-                && "MuMu".equalsIgnoreCase(Build.MODEL)) {
+                && isFileExists("/system/bin/nemuVM-nemu-service")) {
             return MUMU_SIMULATOR; //  MuMu
         }
 
@@ -73,8 +94,14 @@ public class SimulatorDetector {
             return TIANTIAN_SIMULATOR; // 天天
         }
 
-        if (isFileExists("/data/data/com.bluestacks.settings/")
-                && isFileExists("/data/user/0/com.bluestacks.settings/")) {
+        if ((Build.CPU_ABI.contains("x86") || Build.CPU_ABI2.contains("x86"))
+                && (
+                isFileExists("/data/data/com.bluestacks.settings")
+                        || isFileExists("/data/user/0/com.bluestacks.settings/")
+                        || isFileExists("/sdcard/DCIM/SharedFolder/bs_avatar.png")
+                        || isFileExists("/dev/bst_gps")
+                        || isFileExists("/dev/bst_ime")
+        )) {
             return BLUESTACKS_SIMULATOR; // 蓝叠
         }
 
