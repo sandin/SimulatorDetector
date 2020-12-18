@@ -95,8 +95,8 @@ public class SimulatorDetector {
             return TIANTIAN_SIMULATOR; // 天天
         }
 
-        if ((Build.CPU_ABI.contains("x86") || Build.CPU_ABI2.contains("x86"))
-                && (
+        if (/*(Build.CPU_ABI.contains("x86") || Build.CPU_ABI2.contains("x86"))
+                &&*/ (
                 isFileExists("/data/data/com.bluestacks.settings")
                         || isFileExists("/data/user/0/com.bluestacks.settings/")
                         || isFileExists("/sdcard/DCIM/SharedFolder/bs_avatar.png")
